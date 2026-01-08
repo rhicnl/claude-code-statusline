@@ -8,6 +8,11 @@ $current_dir = $input_json.workspace.current_dir
 
 $dir_name = Split-Path -Leaf $current_dir
 
+$model = $input_json.model.display_name
+if ($null -eq $model -or $model -eq "") {
+    $model = "unknown"
+}
+
 $branch = ""
 try {
     $branch = git -C $current_dir rev-parse --abbrev-ref HEAD 2>$null
@@ -40,7 +45,7 @@ if ($null -ne $usage) {
 }
 
 if ($branch) {
-    Write-Output "$ESC[33m$dir_name$ESC[0m $ESC[32m[$branch]$ESC[0m $context_info"
+    Write-Output "$ESC[31m$model$ESC[0m $ESC[33m$dir_name$ESC[0m $ESC[32m[$branch]$ESC[0m $context_info"
 } else {
-    Write-Output "$ESC[33m$dir_name$ESC[0m $context_info"
+    Write-Output "$ESC[31m$model$ESC[0m $ESC[33m$dir_name$ESC[0m $context_info"
 }

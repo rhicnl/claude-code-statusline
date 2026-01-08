@@ -5,6 +5,7 @@ A custom statusline configuration for Claude Code that displays working director
 ## Overview
 
 This configuration adds a custom statusline to Claude Code that shows:
+- **Model**: The active Claude Code model (in red)
 - **Working Directory**: The current directory name (in yellow)
 - **Git Branch**: The current git branch name in brackets (in green)
 - **Context Usage**: The percentage of context window used with token count (in cyan)
@@ -74,6 +75,7 @@ Alternatively, the command in `settings.json` uses `-ExecutionPolicy Bypass` to 
 
 ## Output Format
 
+- **Model**: Red (`[31m`)
 - **Directory**: Yellow (`[33m`)
 - **Git Branch**: Green (`[32m`) in brackets `[branch]`
 - **Context Usage**: Cyan (`[36m`) as percentage with token count
@@ -85,7 +87,7 @@ The token count is displayed in a human-readable format:
 
 Example output:
 ```
-my-project [main] 45% (123.4k)
+Opus 4.5 my-project [main] 45% (123.4k)
 ```
 
 ## Color Customization
@@ -93,9 +95,10 @@ my-project [main] 45% (123.4k)
 ### Current Color Configuration
 
 The statusline uses ANSI color codes to colorize each component:
-- **Directory name**: Yellow (ANSI code `33m`) - Lines 93, 105 in `statusline.ps1`
-- **Git branch**: Green (ANSI code `32m`) - Line 96 in `statusline.ps1`
-- **Context usage**: Cyan (ANSI code `36m`) - Lines 79, 82, 86 in `statusline.ps1`
+- **Model**: Red (ANSI code `31m`) - Lines 48, 50 in `statusline.ps1`
+- **Directory name**: Yellow (ANSI code `33m`) - Lines 48, 50 in `statusline.ps1`
+- **Git branch**: Green (ANSI code `32m`) - Line 48 in `statusline.ps1`
+- **Context usage**: Cyan (ANSI code `36m`) - Lines 34, 37, 44 in `statusline.ps1`
 
 ### How to Change Colors
 

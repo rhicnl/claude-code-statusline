@@ -1,12 +1,13 @@
-# StatusLine command showing: working directory, git branch, and context use percentage
+# StatusLine command showing: model, working directory, git branch, and context use percentage
 # This script is executed by Claude Code and receives JSON input via stdin containing
 # workspace and context window information. It outputs a formatted statusline string.
 #
 # COLOR CONFIGURATION:
 # This script uses ANSI color codes to colorize the statusline components:
-#   - Directory name: Yellow (ANSI code 33m) - Line 93, 105
-#   - Git branch:    Green  (ANSI code 32m) - Line 96
-#   - Context usage:  Cyan   (ANSI code 36m) - Line 79, 82, 86
+#   - Model:         Red    (ANSI code 31m) - Line 132, 138
+#   - Directory name: Yellow (ANSI code 33m) - Line 132, 138
+#   - Git branch:    Green  (ANSI code 32m) - Line 132
+#   - Context usage:  Cyan   (ANSI code 36m) - Line 111, 114, 118
 #
 # To change colors, replace the ANSI codes in the Write-Output statements:
 #   - Find the color code (e.g., [33m for yellow) in the string
@@ -41,6 +42,18 @@
   # Split-Path -Leaf extracts only the last component of the path (directory name)
   # Example: "C:\Users\John\Projects\myapp" becomes "myapp"
   $dir_name = Split-Path -Leaf $current_dir
+
+  # Extract the active Claude Code model display name from the JSON
+  # The JSON structure includes a "model" object with "id" and "display_name" properties
+  # Example: { "id": "claude-opus-4-5-20251101", "display_name": "Opus 4.5" }
+  # We use display_name for a cleaner, more readable statusline
+  $model = $input_json.model.display_name
+
+  # Provide a fallback if model display_name is not available
+  # This handles cases where the model field is null or empty
+  if ($null -eq $model -or $model -eq "") {
+      $model = "unknown"
+  }
 
   # Get git branch
   # Initialize branch variable as empty string (will be used if git command fails)
@@ -118,10 +131,13 @@
       $context_info = "$ESC[36m0% (0)$ESC[0m"
   }
 
-  # Format the status line: directory_name [branch] context%
+  # Format the status line: model directory_name [branch] context%
   # Check if branch name was successfully retrieved (non-empty string)
   if ($branch) {
-      # Output format with branch: "dir_name [branch] context%"
+      # Output format with branch: "model dir_name [branch] context%"
+      # $ESC[31m: Set foreground color to red (for model name)
+      # $model: The Claude model name (e.g., "claude-sonnet-4-20250514")
+      # $ESC[0m: Reset color to default
       # $ESC[33m: Set foreground color to yellow (for directory name)
       # $dir_name: The directory name (e.g., "myapp")
       # $ESC[0m: Reset color to default
@@ -129,12 +145,12 @@
       # [$branch]: Branch name in brackets (e.g., "[main]")
       # $ESC[0m: Reset color again
       # $context_info: The context percentage already formatted with cyan color
-      Write-Output "$ESC[33m$dir_name$ESC[0m $ESC[32m[$branch]$ESC[0m $context_info"
+      Write-Output "$ESC[31m$model$ESC[0m $ESC[33m$dir_name$ESC[0m $ESC[32m[$branch]$ESC[0m $context_info"
   } else {
-      # Output format without branch: "dir_name context%"
+      # Output format without branch: "model dir_name context%"
       # Same as above but without the branch section
       # Used when not in a git repo or git command failed
-      Write-Output "$ESC[33m$dir_name$ESC[0m $context_info"
+      Write-Output "$ESC[31m$model$ESC[0m $ESC[33m$dir_name$ESC[0m $context_info"
   }
 
 # ============================================================================
