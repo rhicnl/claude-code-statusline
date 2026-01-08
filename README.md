@@ -1,13 +1,13 @@
 # Claude Code Statusline Configuration
 
-A custom statusline configuration for Claude Code that displays working directory, git branch, and context window usage percentage in the status bar.
+A custom statusline configuration for Claude Code that displays working directory, git branch, and context window usage with token count in the status bar.
 
 ## Overview
 
 This configuration adds a custom statusline to Claude Code that shows:
 - **Working Directory**: The current directory name (in yellow)
 - **Git Branch**: The current git branch name in brackets (in green)
-- **Context Usage**: The percentage of context window used (in cyan)
+- **Context Usage**: The percentage of context window used with token count (in cyan)
 
 ## Files
 
@@ -68,7 +68,7 @@ Alternatively, the command in `settings.json` uses `-ExecutionPolicy Bypass` to 
    - Reads JSON input containing workspace and context window data
    - Extracts the current directory name
    - Attempts to get the git branch name
-   - Calculates context window usage percentage
+   - Calculates context window usage percentage and formats token count (k/M)
    - Formats output with ANSI color codes
    - Writes the formatted statusline to stdout
 
@@ -76,11 +76,16 @@ Alternatively, the command in `settings.json` uses `-ExecutionPolicy Bypass` to 
 
 - **Directory**: Yellow (`[33m`)
 - **Git Branch**: Green (`[32m`) in brackets `[branch]`
-- **Context Usage**: Cyan (`[36m`) as percentage
+- **Context Usage**: Cyan (`[36m`) as percentage with token count
+
+The token count is displayed in a human-readable format:
+- Less than 1,000 tokens: raw number (e.g., `500`)
+- 1,000 to 999,999 tokens: thousands with `k` suffix (e.g., `45.2k`)
+- 1,000,000+ tokens: millions with `M` suffix (e.g., `1.5M`)
 
 Example output:
 ```
-my-project [main] 45%
+my-project [main] 45% (123.4k)
 ```
 
 ## Color Customization

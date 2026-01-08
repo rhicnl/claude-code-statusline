@@ -89,17 +89,33 @@
           # Calculate percentage: (current / size) * 100, then floor to integer
           # [math]::Floor() rounds down to nearest integer (e.g., 45.7% becomes 45%)
           $pct = [math]::Floor($current * 100 / $size)
-          
+
+          # Format token count for human-readable display
+          # Converts raw token numbers into abbreviated format:
+          # - 1,500,000 tokens -> "1.5M"
+          # - 45,000 tokens -> "45.0k"
+          # - 500 tokens -> "500"
+          if ($current -ge 1000000) {
+              # For millions: divide by 1M and format with 1 decimal place + "M" suffix
+              $tokens_display = "{0:N1}M" -f ($current / 1000000)
+          } elseif ($current -ge 1000) {
+              # For thousands: divide by 1000 and format with 1 decimal place + "k" suffix
+              $tokens_display = "{0:N1}k" -f ($current / 1000)
+          } else {
+              # For small numbers: display raw token count
+              $tokens_display = $current
+          }
+
           # Format context info with cyan color (ANSI code 36m) and reset (0m)
-          # ${pct} uses variable expansion in string, % is literal
-          $context_info = "$ESC[36m${pct}%$ESC[0m"
+          # Shows both percentage and token count: "45% (12.3k)"
+          $context_info = "$ESC[36m${pct}% (${tokens_display})$ESC[0m"
       } else {
           # If size is 0 or invalid, default to 0% with cyan color
-          $context_info = "$ESC[36m0%$ESC[0m"
+          $context_info = "$ESC[36m0% (0)$ESC[0m"
       }
   } else {
       # If usage data is null/missing, default to 0% with cyan color
-      $context_info = "$ESC[36m0%$ESC[0m"
+      $context_info = "$ESC[36m0% (0)$ESC[0m"
   }
 
   # Format the status line: directory_name [branch] context%
