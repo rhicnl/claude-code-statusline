@@ -24,12 +24,19 @@ if ($null -ne $usage) {
     $size = $input_json.context_window.context_window_size
     if ($size -gt 0) {
         $pct = [math]::Floor($current * 100 / $size)
-        $context_info = "$ESC[36m${pct}%$ESC[0m"
+        if ($current -ge 1000000) {
+            $tokens_display = "{0:N1}M" -f ($current / 1000000)
+        } elseif ($current -ge 1000) {
+            $tokens_display = "{0:N1}k" -f ($current / 1000)
+        } else {
+            $tokens_display = $current
+        }
+        $context_info = "$ESC[36m${pct}% (${tokens_display})$ESC[0m"
     } else {
-        $context_info = "$ESC[36m0%$ESC[0m"
+        $context_info = "$ESC[36m0% (0)$ESC[0m"
     }
 } else {
-    $context_info = "$ESC[36m0%$ESC[0m"
+    $context_info = "$ESC[36m0% (0)$ESC[0m"
 }
 
 if ($branch) {
